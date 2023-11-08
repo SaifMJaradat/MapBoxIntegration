@@ -9,15 +9,18 @@ import java.util.List;
 
 public class PolygonViewModel extends ViewModel {
 
+    // We saved our creations id's to if we need use it later.
     public List<String> sourceIds = new ArrayList<>();
     public List<String> layerIds = new ArrayList<>();
 
     private final List<List<Point>> points = new ArrayList<>();
     private final List<Point> outerPoints = new ArrayList<>();
 
+    // List and List of Points to draw customize a polygon.
     private List<Point> clickedPoints = new ArrayList<>();
-    public List<List<Point>> clickedCustomizePoints = new ArrayList<>();
+    private List<List<Point>> clickedCustomizePoints = new ArrayList<>();
 
+    // make public method to access all above list.
     public void addPoint(Point point) {
         clickedPoints.add(point);
     }
@@ -42,11 +45,22 @@ public class PolygonViewModel extends ViewModel {
         return clickedPoints;
     }
 
+    public List<List<Point>> getClickedCustomizePoints() {
+        return clickedCustomizePoints;
+    }
+
+    // We reset our points after draw.
     public void resetPoints() {
         clickedPoints = new ArrayList<>();
         clickedCustomizePoints = new ArrayList<>();
     }
 
+    // Make the logic in ViewModel
+    public Boolean isValidToDraw() {
+        return clickedPoints.size() >= 3;
+    }
+
+    // It's just a dummy data to draw polygon.
     public List<List<Point>> loadPoints() {
         outerPoints.add(Point.fromLngLat(-122.685699, 45.522585));
         outerPoints.add(Point.fromLngLat(-122.708873, 45.534611));

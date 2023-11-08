@@ -1,10 +1,7 @@
 package com.example.mapboxintegration.activities.load_file.ui;
 
 
-import static com.mapbox.maps.extension.style.expressions.dsl.generated.ExpressionDslKt.get;
-
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.lifecycle.ViewModel;
@@ -16,21 +13,15 @@ import com.example.mapboxintegration.base.BaseActivity;
 import com.example.mapboxintegration.databinding.ActivityLoadFileBinding;
 import com.example.mapboxintegration.utilities.Helper;
 import com.mapbox.maps.Style;
-import com.mapbox.maps.extension.style.expressions.dsl.generated.ExpressionDslKt;
-import com.mapbox.maps.extension.style.expressions.generated.Expression;
 import com.mapbox.maps.extension.style.layers.LayerUtils;
-import com.mapbox.maps.extension.style.layers.generated.FillLayer;
-import com.mapbox.maps.extension.style.layers.generated.LineLayer;
-import com.mapbox.maps.extension.style.layers.properties.generated.LineCap;
-import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin;
 import com.mapbox.maps.extension.style.sources.SourceUtils;
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource;
 
 
 public class LoadFileActivity extends BaseActivity<LoadFileViewModel, ActivityLoadFileBinding> {
 
-    private static final int DURATION = 5000;
-    private String sourceId = "sourceId";
+    private final int DURATION = 5000;
+    private final String sourceId = "sourceId";
 
     @Override
     protected int setLayoutResourceId() {
@@ -55,9 +46,11 @@ public class LoadFileActivity extends BaseActivity<LoadFileViewModel, ActivityLo
 
             Helper.getInstance().animateToCameraOptions(viewDataBinding.mapView, Helper.getInstance().loadCameraOptions(46.63903759253634, 24.760498010841783, 17.0, -17.0), DURATION);
 
+            // create json with specific source id and put a filePath in url to read from asset file or any file.
             GeoJsonSource geoJsonSource = new GeoJsonSource.Builder(sourceId).url(Helper.getInstance().filePath).build();
-
             SourceUtils.addSource(style, geoJsonSource);
+
+            // when json file added make to sure to add fill and line layer to draw stroke, width and etc...
             LayerUtils.addLayer(style, Helper.getInstance().createFillLayerWithFill(Helper.getInstance().getRandomString(6), sourceId));
             LayerUtils.addLayer(style, Helper.getInstance().createLineLayer(Helper.getInstance().getRandomString(6), sourceId));
         });

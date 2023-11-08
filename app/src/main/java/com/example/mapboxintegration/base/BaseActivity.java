@@ -10,9 +10,13 @@ import androidx.lifecycle.ViewModel;
 
 public abstract class BaseActivity<V extends ViewModel, T extends ViewDataBinding> extends AppCompatActivity {
 
+    // Create customize layout resource.
     protected abstract int setLayoutResourceId();
+
+    // Create customize ViewModel because we have multi ViewModel.
     protected abstract ViewModel createViewModel();
 
+    // Make it generic to support parameterized types.
     protected T viewDataBinding;
     protected V viewModel;
 
@@ -23,6 +27,7 @@ public abstract class BaseActivity<V extends ViewModel, T extends ViewDataBindin
     }
 
     private void initBuilding() {
+        // We use DataBinding to make access for views more easier for us.
         viewDataBinding = DataBindingUtil.setContentView(this, setLayoutResourceId());
         viewModel = (V) createViewModel();
     }

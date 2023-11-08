@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModel;
@@ -37,10 +36,7 @@ import java.io.IOException;
 
 public class MainActivity extends BaseActivity<MainViewModel, ActivityMainBinding> {
 
-    int LOCATION_REFRESH_TIME = 15000;
-    int LOCATION_REFRESH_DISTANCE = 500;
-    private static final int DURATION = 5000;
-    int SELECT_PICTURE = 200;
+    private final int SELECT_PICTURE = 200;
 
     @Override
     protected int setLayoutResourceId() {
@@ -74,6 +70,7 @@ public class MainActivity extends BaseActivity<MainViewModel, ActivityMainBindin
         });
     }
 
+    // We request location update to get current location but we should ask about permission first.
     private void getCurrentLocation() {
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -83,16 +80,22 @@ public class MainActivity extends BaseActivity<MainViewModel, ActivityMainBindin
 
             return;
         }
+        int LOCATION_REFRESH_TIME = 15000;
+        int LOCATION_REFRESH_DISTANCE = 500;
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, locationListener);
     }
 
-    LocationListener locationListener = location -> {
+    // This is locationListener to get latest location points then draw our marker.
+    private final LocationListener locationListener = location -> {
+        int DURATION = 5000;
         Helper.getInstance().animateToCameraOptions(viewDataBinding.mapView, Helper.getInstance().loadCameraOptions(location.getLongitude(), location.getLatitude(), 15.0, -15.0), DURATION);
         viewModel.longitude = location.getLongitude();
         viewModel.latitude = location.getLatitude();
         drawMarker(false, null);
     };
 
+    // We use this method multi time because we have a feature to change our marker from gallery.
+    // We make it optional to change our icon.
     private void drawMarker(boolean isMarkClicked, Bitmap newIcon) {
         Bitmap icon;
         if (isMarkClicked) {
@@ -116,6 +119,7 @@ public class MainActivity extends BaseActivity<MainViewModel, ActivityMainBindin
         });
     }
 
+    // Intent for go to Gallery or image Provider.
     void imageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");

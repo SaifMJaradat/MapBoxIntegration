@@ -58,49 +58,66 @@ public class PolygonActivity extends BaseActivity<PolygonViewModel, ActivityPoly
     }
 
     private void drawCustomizePolygon() {
-        if (viewModel.getSelectedPoints().size() < 3) {
-            Toast.makeText(this, R.string.please_click_on_map_to_choose_location, Toast.LENGTH_SHORT).show();
-        } else {
-            viewModel.clickedCustomizePoints.add(viewModel.getSelectedPoints());
+
+        /*
+        We Checking is valid to draw or not because we are trying to draw (Polygon).
+        The minimum number of sides a polygon can have is 3 because it needs a minimum of 3 sides to be a closed shape or else it will be open.
+         */
+        if (viewModel.isValidToDraw()) {
+
+            viewModel.getClickedCustomizePoints().add(viewModel.getSelectedPoints());
 
             viewDataBinding.mapView.getMapboxMap().getStyle(style -> {
 
+                // We create a custom SourceId and we added to ViewModel to saved it in our list.
                 viewModel.addSourceId(Helper.getInstance().getRandomString(15));
 
+                // We get GeoJsonSource from latest SourceId created.
                 GeoJsonSource geoJsonSource = (GeoJsonSource) SourceUtils.getSource(style, viewModel.getLastSourceIdAdded());
 
+
+                // We checking if the source exist or not, if doesn't we will create a new source for polygon if it is exist we will update the current source.
                 if (geoJsonSource == null) {
-                    SourceUtils.addSource(style, Helper.getInstance().createSourceForPolygon(viewModel.getLastSourceIdAdded(), viewModel.clickedCustomizePoints));
+                    SourceUtils.addSource(style, Helper.getInstance().createSourceForPolygon(viewModel.getLastSourceIdAdded(), viewModel.getClickedCustomizePoints()));
                 } else {
-                    Helper.getInstance().updateSource(geoJsonSource, viewModel.clickedCustomizePoints);
+                    Helper.getInstance().updateSource(geoJsonSource, viewModel.getClickedCustomizePoints());
                 }
 
+                // We create a custom LayerId and we added to ViewModel to saved it in our list.
                 viewModel.addLayerId(Helper.getInstance().getRandomString(15));
 
+                // For sure we will add layer with latest LayerId Added to the latest SourceId.
                 LayerUtils.addLayer(style, Helper.getInstance().createLayer(viewModel.getLastLayerIdAdded(), viewModel.getLastSourceIdAdded()));
 
+                // We shouldn't forget reset our list by below method :D;
                 viewModel.resetPoints();
             });
+        } else {
+            Toast.makeText(this, R.string.please_click_on_map_to_choose_location, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void setupMap() {
         viewDataBinding.mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS);
 
+        // We created GesturesPlugin to make some customize clicks.
         GesturesPlugin gesturesPlugin = GesturesUtils.getGestures(viewDataBinding.mapView);
         gesturesPlugin.addOnMapClickListener(this::onMapClick);
         gesturesPlugin.addOnMapLongClickListener(this::onLongMapClick);
 
-        Helper.getInstance().animateToCameraOptions(viewDataBinding.mapView, Helper.getInstance().loadCameraOptions(-122.685699, 45.522585,11.0, -11.0), DURATION);
+        // We focused to first Points, it's static because we have a dummy data in ViewModel :D.
+        Helper.getInstance().animateToCameraOptions(viewDataBinding.mapView, Helper.getInstance().loadCameraOptions(-122.685699, 45.522585, 11.0, -11.0), DURATION);
         drawPolygon();
     }
 
     private boolean onMapClick(Point point) {
+        // We added our clicked points to draw Polygon.
         viewModel.addPoint(point);
         drawMarker(point);
         return true;
     }
 
+    // We changed the latest layer we drew
     private boolean onLongMapClick(Point point) {
         viewDataBinding.mapView.getMapboxMap().getStyle(style -> {
 
@@ -110,11 +127,12 @@ public class PolygonActivity extends BaseActivity<PolygonViewModel, ActivityPoly
 
             FillLayer fillLayer = (FillLayer) LayerUtils.getLayer(style, viewModel.getLastLayerIdAdded());
 
-            fillLayer.fillColor("#" + Helper.getInstance().getRandomColor(6));
+            fillLayer.fillColor(Helper.getInstance().getRandomColor(6));
         });
         return true;
     }
 
+    // We will draw a custom marker with custom point in out mapView, we also make resize for Bitmap.
     private void drawMarker(Point point) {
 
         Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.marker);
@@ -128,6 +146,7 @@ public class PolygonActivity extends BaseActivity<PolygonViewModel, ActivityPoly
         pointAnnotationManager.create(pointAnnotationOptions);
     }
 
+    // Drawing Custom Polygon from our dummy data.
     private void drawPolygon() {
         viewDataBinding.mapView.getMapboxMap().getStyle(style -> {
             SourceUtils.addSource(style, Helper.getInstance().createSourceForPolygon(sourceId, viewModel.loadPoints()));
