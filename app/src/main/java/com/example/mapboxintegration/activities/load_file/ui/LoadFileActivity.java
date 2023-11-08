@@ -30,12 +30,7 @@ import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource;
 public class LoadFileActivity extends BaseActivity<LoadFileViewModel, ActivityLoadFileBinding> {
 
     private static final int DURATION = 5000;
-    private final LineCap lineCap = LineCap.ROUND;
-    private final LineJoin lineJoin = LineJoin.ROUND;
-
-    private final String STROKE_EXPRESSION_KEY = "stroke";
-    private final String STROKE_WIDTH_EXPRESSION_KEY = "stroke-width";
-    private final String STROKE_OPACITY_EXPRESSION_KEY = "stroke-opacity";
+    private String sourceId = "sourceId";
 
     @Override
     protected int setLayoutResourceId() {
@@ -58,22 +53,13 @@ public class LoadFileActivity extends BaseActivity<LoadFileViewModel, ActivityLo
 
         viewDataBinding.mapView.getMapboxMap().getStyle(style -> {
 
-            Helper.getInstance().animateToCameraOptions
-                    (viewDataBinding.mapView,
-                            Helper.getInstance().loadCameraOptions(46.63903759253634, 24.760498010841783, 17.0, -17.0), DURATION);
+            Helper.getInstance().animateToCameraOptions(viewDataBinding.mapView, Helper.getInstance().loadCameraOptions(46.63903759253634, 24.760498010841783, 17.0, -17.0), DURATION);
 
-            GeoJsonSource geoJsonSource = new GeoJsonSource.Builder("line").url("asset://map.geojson").build();
+            GeoJsonSource geoJsonSource = new GeoJsonSource.Builder(sourceId).url(Helper.getInstance().filePath).build();
 
             SourceUtils.addSource(style, geoJsonSource);
-
-            LineLayer lineLayer = new LineLayer("layerId", "line");
-            lineLayer.lineJoin(lineJoin).lineCap(lineCap).lineOpacity(Expression.toNumber(get(STROKE_OPACITY_EXPRESSION_KEY))).lineWidth(Expression.toNumber(get(STROKE_WIDTH_EXPRESSION_KEY))).lineColor(Expression.toString(get(STROKE_EXPRESSION_KEY)));
-
-            FillLayer fillLayer = new FillLayer("layerId2", "line").fillColor(Expression.toString(get("fill")));
-
-            LayerUtils.addLayer(style, fillLayer);
-            LayerUtils.addLayer(style, lineLayer);
-
+            LayerUtils.addLayer(style, Helper.getInstance().createFillLayerWithFill(Helper.getInstance().getRandomString(6), sourceId));
+            LayerUtils.addLayer(style, Helper.getInstance().createLineLayer(Helper.getInstance().getRandomString(6), sourceId));
         });
     }
 

@@ -1,5 +1,7 @@
 package com.example.mapboxintegration.utilities;
 
+import static com.mapbox.maps.extension.style.expressions.dsl.generated.ExpressionDslKt.get;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -11,8 +13,12 @@ import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.maps.CameraOptions;
 import com.mapbox.maps.MapView;
+import com.mapbox.maps.extension.style.expressions.generated.Expression;
 import com.mapbox.maps.extension.style.layers.generated.FillExtrusionLayer;
 import com.mapbox.maps.extension.style.layers.generated.FillLayer;
+import com.mapbox.maps.extension.style.layers.generated.LineLayer;
+import com.mapbox.maps.extension.style.layers.properties.generated.LineCap;
+import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin;
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource;
 import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin;
 import com.mapbox.maps.plugin.animation.CameraAnimationsUtils;
@@ -28,6 +34,9 @@ public class Helper {
     private static Helper helper = null;
 
     public boolean isAnimating = false;
+    public String filePath = "asset://map.geojson";
+    private final LineCap lineCap = LineCap.ROUND;
+    private final LineJoin lineJoin = LineJoin.ROUND;
 
     private Helper() {
 
@@ -45,8 +54,17 @@ public class Helper {
         return new FillLayer(layerId, sourceId).fillColor(Color.parseColor("#" + getRandomColor(6)));
     }
 
-    public FillLayer createLayerWithoutFillColor(String layerId, String sourceId) {
-        return new FillLayer(layerId, sourceId);
+    public FillLayer createFillLayerWithFill(String layerId, String sourceId) {
+        return new FillLayer(layerId, sourceId).fillColor(Expression.toString(get("fill")));
+    }
+
+    public LineLayer createLineLayer(String layerId, String sourceId) {
+        LineLayer lineLayer = new LineLayer(layerId, sourceId);
+        String STROKE_EXPRESSION_KEY = "stroke";
+        String STROKE_WIDTH_EXPRESSION_KEY = "stroke-width";
+        String STROKE_OPACITY_EXPRESSION_KEY = "stroke-opacity";
+        lineLayer.lineJoin(lineJoin).lineCap(lineCap).lineOpacity(Expression.toNumber(get(STROKE_OPACITY_EXPRESSION_KEY))).lineWidth(Expression.toNumber(get(STROKE_WIDTH_EXPRESSION_KEY))).lineColor(Expression.toString(get(STROKE_EXPRESSION_KEY)));
+        return lineLayer;
     }
 
     public CameraOptions loadCameraOptions(double longitude, double latitude, double zoom, double bearing) {
