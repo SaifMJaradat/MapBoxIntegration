@@ -6,10 +6,10 @@ This Android project demonstrates the integration of Mapbox, a versatile mapping
 
 ## Project Structure
 
-# I used MVVM Architecture pattern to build out project because helps cleanly separate an application's business and presentation logic from its user interface (UI), it should be use Clean Architecure Pattern but we don't use it because our focusing on MapBox Integration.
-# Trying to make Hight cohesion and Low coupling.
-# Use Singleton Pattern to restricts the instantiation of a class and ensures that only one instance of the class exists in the Java Virtual Machine.
-# Handle all points and Shapes in ViewModel with best practices.
+- I used MVVM Architecture pattern to build out project because helps cleanly separate an application's business and presentation logic from its user interface (UI), it should be use Clean Architecure Pattern but we don't use it because our focusing on MapBox Integration.
+- Trying to make Hight cohesion and Low coupling.
+- Use Singleton Pattern to restricts the instantiation of a class and ensures that only one instance of the class exists in the Java Virtual Machine.
+- Handle all points and Shapes in ViewModel with best practices.
 
 ## Table of Contents
 
