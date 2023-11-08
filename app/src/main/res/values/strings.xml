@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">MapBoxIntegration</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoic2FpZmphcmFkYXQiLCJhIjoiY2xvaDE5cmNvMGV4aDJybnZrN2t4eTB0cyJ9.mnyQSwT_Z7K0b6sgkZl0Og</string>
+    <string name="draw_polygon">Draw Polygon</string>
+    <string name="customize_polygon">Customize Polygon</string>
+    <string name="load_file">Load File</string>
+    <string name="please_click_on_map_to_choose_location">Please click on map to choose more than 3 location</string>
+    <string name="enable_your_location_please">Enable Your Location Please.</string>
+    <string name="current_location">Current Location</string>
+    <string name="select_picture">Select Picture</string>
+
+</resources>
